@@ -34,7 +34,7 @@ const courseSchema = new mongoose.Schema({
         type:String,
         enum:['DataScience','Python','Java','Machine Learning','Web development']
     },
-    instrutor:{
+    instructor:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'instructor'
     },

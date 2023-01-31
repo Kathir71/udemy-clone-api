@@ -26,7 +26,6 @@ const SignUp = (req, res) => {
         newUser
           .save()
           .then((response) => {
-            console.log("Hii");
             console.log(response);
             const token = signToken({
               userId: response._id,

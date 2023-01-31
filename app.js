@@ -6,9 +6,12 @@ var logger = require("morgan");
 require("dotenv").config();
 const session = require("express-session");
 const passport = require("./controllers/googleAuth")
-var usersRouter = require("./routes/users");
+var usersRouter = require("./routes/userRouter");
 var indexRouter = require("./routes/index");
+var testRouter = require("./routes/trial");
+var instructorRouter = require("./routes/instructorRouter");
 const mongoose = require("mongoose");
+const cloudinary = require('cloudinary');
 const UserModel = require("./models/userModel");
 const cors = require("cors");
 var app = express();
@@ -23,7 +26,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/user", usersRouter);
-
+// app.use("/test" , testRouter);
+app.use("/instructor" ,instructorRouter );
 // catch 404 and forward to error handler
 app.use(
   session({
@@ -46,7 +50,10 @@ app.use(function (err, req, res, next) {
 });
 app.listen((process.env.PORT) , () =>{
   console.log(`Server running in port ${process.env.PORT}`)})
-
+//   console.log(cloudinary.config().cloud_name);
+// cloudinary.uploader.upload('./sample1.jpg' , {public_id:"huikk" , folder:"/assessts",resource_type:"image"}).then((response) => {
+//     console.log(response);
+// }).catch(err => console.log(err))
 // app.get("/auth/google" , 
 //    passport.authenticate("google", { scope: ["profile","email"] }),
 

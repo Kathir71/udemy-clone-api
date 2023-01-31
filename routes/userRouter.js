@@ -1,0 +1,14 @@
+var express = require("express");
+var router = express.Router();
+var bodyParser = require('body-parser');
+var multer = require('multer');
+var upload = multer();
+router.use(bodyParser.json()); 
+router.use(express.static('public'));
+router.use(bodyParser.urlencoded({ extended: false })); 
+const userController = require("../controllers/users");
+const jauth = require("../middlewares/Jauth");
+router.post("/signup",upload.single('profileImg'), userController.addUser, jauth.signToken);
+router.post("/login",userController.loginUser, jauth.signToken);
+router.get("/view" , jauth.authenticateToken,userController.getUser);
+module.exports = router;

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const moduleSchema = new mongoose.Schema({
+const instructorSchema = new mongoose.Schema({
     insName:{
         type:String,
         required:true
@@ -13,5 +13,21 @@ const moduleSchema = new mongoose.Schema({
     bio:{
         occupation:String,
         about:String
+    },
+    imgUrl:{
+        type:String,
+        required:true
+    },
+    insEmail:{
+        type:String,
+        required:true,
+        lowercase:true,
+        unique:true
+    },
+    insPassword:{
+        type:String,
+        required:true
     }
 })
+const instructorModel = mongoose.model('instructor' ,instructorSchema );
+module.exports = instructorModel;
