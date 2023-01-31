@@ -1,32 +1,35 @@
-const mongoose = require('mongoose');
-const passport = require("passport");
-const passportLocalMongoose = require("passport-local-mongoose");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const userSchema = new mongoose.Schema({
+const mongoose = require("mongoose");
+const UserSchema = new mongoose.Schema({
     userName:{
         type:String,
-    required:true
+        required:true,
+        trim:true
     },
     userEmail:{
         type:String,
         required:true,
+        lowercase:true,
+        unique:true
     },
-    // googleId:{
-    //     type:String,
-    //     required:false
-    // },
-    userPassword:{
-        type:String
+    password:{
+        type:String,
+        required:true
     },
-    userImg:{
-        type:String
+    profileImg:{
+        type:String,
+        default:"https://unsplash.com/200/200"
     },
-    // coursesEnrolled:{
-    //     type:Array[mongoose.Schema.Types.ObjectId],
-
-    // }
+    coursesEnrolled:[
+        {type:mongoose.Schema.Types.ObjectId , ref:'course'}
+    ],
+    userCourseDetails:[
+        {
+            courseId:{
+                type:mongoose.Schema.Types.ObjectId,ref:'course',
+            },
+            details:[Boolean]
+        }
+    ]
 })
-userSchema.plugin(passportLocalMongoose);
-// userSchema.plugin(findOrCreate);
-const userModel = mongoose.model("user",userSchema);
+const userModel = mongoose.model("user",UserSchema);
 module.exports = userModel;
