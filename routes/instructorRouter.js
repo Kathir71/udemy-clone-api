@@ -8,7 +8,7 @@ const jauth = require("../middlewares/Jauth");
 router.use(bodyParser.json()); 
 router.use(express.static('public'));
 router.use(bodyParser.urlencoded({ extended: false })); 
-router.post('/add' ,upload.single('insImage'), instructor.addInstructor , jauth.signToken);
+router.post('/add' ,upload.fields([{name:'insImage' , maxCount:1} , {name:'instructor' , maxCount:1}]), instructor.addInstructor , jauth.signToken);
 router.post('/login',upload.single('instructor'), instructor.loginInstructor,jauth.signToken);
 router.get('/view' , jauth.authenticateToken, instructor.getInstructor);
 module.exports = router;

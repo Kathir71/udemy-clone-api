@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const moduleSchema = new mongoose.Schema({
-    tile:{
+    title:{
         type:String,
         required:true
     },

@@ -1,12 +1,10 @@
 const instructorModel = require("../models/instructorModel");
 const fileHandlers = require("./fileUpload");
 const addInstructor = (req, res, next) => {
+  console.log(req.files);
   let obj = req.body.instructor;
   obj = JSON.parse(obj);
-  console.log(obj);
-  let imageFile = req.file;
-  console.log(req.body);
-  console.log(req.file);
+  let imageFile = req.files.insImage[0];
   fileHandlers.imageUpload(imageFile).then((response) => {
     const temp = { ...obj, imgUrl: response.secure_url };
     const toSave = new instructorModel(temp);

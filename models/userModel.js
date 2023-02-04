@@ -10,7 +10,6 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:true,
         lowercase:true,
-        unique:true
     },
     password:{
         type:String,
@@ -32,6 +31,6 @@ const UserSchema = new mongoose.Schema({
         }
     ]
 })
-UserSchema.plugin(passportLocalMongoose);
+//UserSchema.plugin(passportLocalMongoose);
 const userModel = mongoose.model("user",UserSchema);
 module.exports = userModel;

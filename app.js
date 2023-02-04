@@ -10,6 +10,7 @@ var usersRouter = require("./routes/userRouter");
 var indexRouter = require("./routes/index");
 var testRouter = require("./routes/trial");
 var instructorRouter = require("./routes/instructorRouter");
+const courseRouter = require('./routes/courseRoutes')
 const mongoose = require("mongoose");
 const cloudinary = require('cloudinary');
 const UserModel = require("./models/userModel");
@@ -28,6 +29,7 @@ app.use("/", indexRouter);
 app.use("/user", usersRouter);
 // app.use("/test" , testRouter);
 app.use("/instructor" ,instructorRouter );
+app.use("/course" , courseRouter);
 // catch 404 and forward to error handler
 app.use(
   session({
@@ -38,7 +40,17 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-mongoose.connect("mongodb://localhost:27017/udemy");
+// mongoose.connect("mongodb://localhost:27017/udemy" , () => {
+//   console.log("Database connected successfully");
+// });
+mongoose.connect(
+  "mongodb://127.0.0.1:27017/mydb",
+  // options,
+  (err) => {
+   if(err) console.log(err) 
+   else console.log("mongdb is connected");
+  }
+);
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
