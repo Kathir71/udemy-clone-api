@@ -13,8 +13,9 @@ const videoUpload = (videoFile) => {
     return cloudinary.uploader.upload('./temp' , {resource_type:"video"});
 }
 const pdfUpload = (pdfFile) => {
-    fs.writeFileSync('./temp' , pdfFile.buffer);
-    return cloudinary.uploader.upload('./temp', {resource_type: "raw", use_filename: true, unique_filename: false});
+    fs.writeFileSync('./temp.pdf' , pdfFile.buffer);
+    return cloudinary.uploader.upload('./temp.pdf', {resource_type: "raw", use_filename: true, unique_filename: false});
+    return cloudinary.uploader.upload('./temp.pdf', );
 }
 module.exports = {
     imageUpload , 

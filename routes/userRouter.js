@@ -8,8 +8,16 @@ router.use(express.static('public'));
 router.use(bodyParser.urlencoded({ extended: false })); 
 const userController = require("../controllers/users");
 const jauth = require("../middlewares/Jauth");
+
 router.post("/signup",upload.fields([{name:'profileImg' , maxCount:1} , {name:'user' , maxCount:1}]), userController.addUser, jauth.signToken);
-router.post("/login",userController.loginUser, jauth.signToken);
+
+router.post("/login",upload.single('user'),userController.loginUser, jauth.signToken);
+
 router.get("/view" , jauth.authenticateToken,userController.getUser);
-router.get("/completionDetails" , jauth.authenticateToken , userController.getUserCompletion);
+
+router.post("/completionDetails" , jauth.authenticateToken , userController.getUserCompletion);
+
+router.get("/coursesEnrolled" , jauth.authenticateToken , userController.getUserCourses);
+
+router.get("/userStatus" , jauth.authenticateToken , userController.getUserStatus);
 module.exports = router;

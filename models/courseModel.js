@@ -13,6 +13,9 @@ const courseSchema = new mongoose.Schema({
     keypoints:{
         type:[String]
     },
+    learningPoints:{
+        type:[String]
+    },
     updatedDate:{
         type:Date,
         default:Date.now

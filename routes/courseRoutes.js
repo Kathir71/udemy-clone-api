@@ -11,17 +11,17 @@ const userController = require("../controllers/users");
 const jauth = require("../middlewares/Jauth");
 const coursesController = require("../controllers/course");
 const moduleController = require("../controllers/module");
-router.post("/add" , jauth.authenticateToken , upload.fields([{name:'courseImg' , maxCount:1} , {name:'course' , maxCount:1}]), (req , res , next) => {
+router.post("/add" , jauth.authenticateToken , (req , res , next) => {
     instructorModel.findOne().where('_id').equals(req.user.objectId).then((response) => {
         console.log(response);
         next();
     }).catch((err) => {
         res.status(407).json({msg:"Invalid instructor"});
     })
-} , coursesController.addCourse);
+} , upload.fields([{name:'courseImg' , maxCount:1} , {name:'course' , maxCount:1}]) , coursesController.addCourse);
 
 
-router.get("/view" , coursesController.viewCourse);
+router.post("/view" , coursesController.viewCourse);
 
 
 router.post("/addLesson" , jauth.authenticateToken , 
@@ -36,11 +36,19 @@ router.post("/addLesson" , jauth.authenticateToken ,
 
 router.post("/enrollCourse" , jauth.authenticateToken , coursesController.userEnrollCourse);
 
-router.get("/getLesson" ,jauth.authenticateToken , moduleController.getLesson );//handle two scenarios ig fuck
+router.get("/getLesson/:courseId/:lessonId" ,jauth.authenticateToken , moduleController.getLesson );//handle two scenarios ig fuck
 
-router.get("/markcompleted" , jauth.authenticateToken , moduleController.markCompleted);
+router.post("/markcompleted" , jauth.authenticateToken , moduleController.markCompleted);
 
 router.get("/enrolledCourses" , jauth.authenticateToken , coursesController.getEnrolledCourses);
 
 router.post("/review" , jauth.authenticateToken , coursesController.getReviews);
+
+router.get("/all" , coursesController.getAllCourses);    
+
+router.post("/courseReviews/:courseId" , coursesController.getCourseReviews);
+
+router.get("/category/:category" , coursesController.getByCategory);
+
+router.get("/navOptions" , coursesController.getNavOptions);
 module.exports = router;

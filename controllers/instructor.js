@@ -38,9 +38,19 @@ const loginInstructor = (req , res ,next) => {
 const getInstructor = (req , res , next) => {
     const insId = req.user.objectId;
     console.log(req.user);
-    instructorModel.find().where("_id").equals(insId).then((response) => {
-        res.json(response);
+    instructorModel.findById(insId).select({insPassword:0}).populate('course').then((response) => {
+      console.log(response);
+      let averageRating = 0;
+      let toSend = response.toJSON();
+      for ( let i = 0 ; i < response.course.length ; i++ ) {
+      console.log(response.course[i].rating);
+      averageRating += response.course[i].rating;
+      }
+      toSend['userType'] = 'instructor';
+      toSend['instructorRating'] = averageRating/response.course.length;
+        res.status(200).json(toSend);
     }).catch((err) => {
+      console.log(err);
         console.log("Data retrieval error");
     })
 }
