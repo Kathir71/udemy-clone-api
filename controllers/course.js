@@ -3,7 +3,8 @@ const moduleModel = require("../models/moduleModel");
 const userModel = require("../models/userModel");
 const instructorModel = require("../models/instructorModel");
 const fileHandlers = require("./fileUpload");
-const addCourse = (req, res, next) => {
+const addCourse = async(req, res, next) => {
+  try{
   let courseDetails = req.body.course;
   console.log(req.body);
   const instructorId = req.user.objectId;
@@ -39,6 +40,11 @@ const addCourse = (req, res, next) => {
       console.log(err);
       res.status(400).json({ msg: "Invalid course details" });
     });
+  }
+  catch(err){
+    console.log(err);
+    res.status(500).send({msg:"Internal Server Error"});
+  }
 };
 const viewCourse = (req, res, next) => {
   console.log(req.body);

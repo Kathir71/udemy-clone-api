@@ -1,59 +1,77 @@
 const instructorModel = require("../models/instructorModel");
+const userModel = require("../models/userModel");
 const fileHandlers = require("./fileUpload");
-const addInstructor = (req, res, next) => {
-  console.log(req.files);
+
+const addInstructor = async(req, res, next) => {
+  try{
   let obj = req.body.instructor;
-  obj = JSON.parse(obj);
   let imageFile = req.files.insImage[0];
-  fileHandlers.imageUpload(imageFile).then((response) => {
-    const temp = { ...obj, imgUrl: response.secure_url };
-    const toSave = new instructorModel(temp);
-    toSave.save().then((response) => {
-      console.log("Instructor stored successfully");
-      console.log(response);
-      req.user = {userName:response.insName , objectId:response._id};
+  const studentUser = await userModel.findOne().where('userEmail').equals(obj.insEmail);
+  if (studentUser){
+    res.status(403).send({msg:"Student cannot be a instructor"});
+    return;
+  }
+  const alreadyExist = await instructorModel.findOne().where('insEmail').equals(obj.insEmail);
+  if (alreadyExist){
+    res.status(403).send({msg:"Email already registered"})
+    return;
+  }
+  const imageUpload = await fileHandlers.imageUpload(imageFile)
+  const temp = { ...obj, imgUrl: imageUpload.secure_url };
+  const toSave = new instructorModel(temp);
+  const newIns = await toSave.save()
+      console.log(newIns);
+      req.user = {userName:newIns.insName , objectId:newIns._id};
     next();
-    })
-    .catch((saveErr) => {
-        console.log(saveErr);
-    })
-  }).catch((imgError) => {
-    console.log(imgError);
-  })
+}
+catch(err){
+  console.log(err);
+  res.status(500).send({msg:"Internal Server Error"});
+}
 };
-const loginInstructor = (req , res ,next) => {
+const loginInstructor = async(req , res ,next) => {
+  try{
     let obj = req.body.instructor;
     console.log(req);
     console.log(req.body);
-    obj = JSON.parse(obj);
-    instructorModel.findOne().where('insEmail').equals(obj.insEmail).where('insPassword').equals(obj.insPassword).then((response) => {
+    const ins = await instructorModel.findOne().where('insEmail').equals(obj.insEmail).where('insPassword').equals(obj.insPassword)
+    if(ins){
         console.log("Valid login details");
-        req.user = {userName:response.insName , objectId:response._id};
+        req.user = {userName:ins.insName , objectId:ins._id};
         next();
-    }).catch((err) => {
+    }
+    else{
         console.log("Invalid credentials");
         res.status(403).json({msg:"Invalid credentials"});
-    })
+    }
+  }
+  catch(err){
+    console.log(err);
+    res.status(500).send({msg:"Internal Server Error"});
+  }
 }
-const getInstructor = (req , res , next) => {
+
+const getInstructor = async(req , res , next) => {
+  try{
     const insId = req.user.objectId;
     console.log(req.user);
-    instructorModel.findById(insId).select({insPassword:0}).populate('course').then((response) => {
-      console.log(response);
+    const ins = await instructorModel.findById(insId).select({insPassword:0}).populate('course')
       let averageRating = 0;
-      let toSend = response.toJSON();
-      for ( let i = 0 ; i < response.course.length ; i++ ) {
-      console.log(response.course[i].rating);
-      averageRating += response.course[i].rating;
+      let toSend = ins.toJSON();
+      for ( let i = 0 ; i < ins.course.length ; i++ ) {
+      console.log(ins.course[i].rating);
+      averageRating += ins.course[i].rating;
       }
       toSend['userType'] = 'instructor';
-      toSend['instructorRating'] = averageRating/response.course.length;
+      toSend['instructorRating'] = averageRating/ins.course.length;
         res.status(200).json(toSend);
-    }).catch((err) => {
+  }catch(err){
       console.log(err);
-        console.log("Data retrieval error");
-    })
+      res.status(500).send({msg:"Internal Server Error"});
+    }
 }
+
+
 module.exports = {
     addInstructor,
     loginInstructor,
