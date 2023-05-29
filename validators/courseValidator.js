@@ -28,5 +28,38 @@ const addCourseValidator = [
 ];
 
 const addModuleValidator = [
-    body("courseId").isMongoId().withMessage("Invalid course id").escape(),
+  body("courseId").isMongoId().withMessage("Invalid course id").escape(),
 ];
+
+const courseViewValidator = [
+  body("courseId").isMongoId().withMessage("Invalid course id"),
+];
+
+const enrollCourseValidator = [
+  body("courseId").isMongoId().withMessage("Invalid course id"),
+];
+
+const markCompletedValidator = [
+  body("courseId").isMongoId().withMessage("Invalid course id"),
+  body("lessonId").isMongoId().withMessage("Invalid lesson id"),
+];
+
+const reviewValidator = [
+  body("courseId").isMongoId().withMessage("Invalid course id"),
+  body("rating").isFloat({ min: 0, max: 5 }).withMessage("Invalid rating"),
+  body("comment")
+    .trim()
+    .notEmpty()
+    .isAlphanumeric()
+    .withMessage("Comment cannot be empty")
+    .escape(),
+];
+
+module.exports = {
+  addCourseValidator,
+  addModuleValidator,
+  courseViewValidator,
+  enrollCourseValidator,
+  markCompletedValidator,
+  reviewValidator,
+};

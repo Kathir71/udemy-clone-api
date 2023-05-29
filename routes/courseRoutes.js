@@ -7,8 +7,11 @@ const instructorModel = require("../models/instructorModel");
 router.use(bodyParser.json());
 router.use(express.static("public"));
 router.use(bodyParser.urlencoded({ extended: false }));
+
 const userController = require("../controllers/users");
-const jauth = require("../middlewares/Jauth");
+const jauth = require("../utils/token");
+const validators = require("../validators/courseValidator");
+const { validate } = require("../validators/index");
 const coursesController = require("../controllers/course");
 const moduleController = require("../controllers/module");
 router.post(
@@ -31,10 +34,19 @@ router.post(
     { name: "courseImg", maxCount: 1 },
     { name: "course", maxCount: 1 },
   ]),
+  (req, res, next) => {
+    req.body.course = JSON.parse(req.body.course);
+    next();
+  },
+  validate(validators.addCourseValidator),
   coursesController.addCourse
 );
 
-router.post("/view", coursesController.viewCourse);
+router.post(
+  "/view",
+  validate(validators.courseViewValidator),
+  coursesController.viewCourse
+);
 
 router.post(
   "/addLesson",
@@ -44,6 +56,11 @@ router.post(
     { name: "videoFile", maxCount: 1 },
     { name: "lesson", maxCount: 1 },
   ]),
+  // (req, res, next) => {
+  //   req.body.courseId = JSON.parse(req.body.courseId);
+  //   next();
+  // },
+  validate(validators.addModuleValidator),
   (req, res, next) => {
     instructorModel
       .findOne()
@@ -63,6 +80,7 @@ router.post(
 router.post(
   "/enrollCourse",
   jauth.authenticateToken,
+  validate(validators.enrollCourseValidator),
   coursesController.userEnrollCourse
 );
 
@@ -70,11 +88,12 @@ router.get(
   "/getLesson/:courseId/:lessonId",
   jauth.authenticateToken,
   moduleController.getLesson
-); //handle two scenarios ig fuck
+);
 
 router.post(
   "/markcompleted",
   jauth.authenticateToken,
+  validate(validators.markCompletedValidator),
   moduleController.markCompleted
 );
 
@@ -93,4 +112,5 @@ router.post("/courseReviews/:courseId", coursesController.getCourseReviews);
 router.get("/category/:category", coursesController.getByCategory);
 
 router.get("/navOptions", coursesController.getNavOptions);
+
 module.exports = router;
