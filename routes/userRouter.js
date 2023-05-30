@@ -59,4 +59,10 @@ router.get(
   userController.getUserStatus
 );
 
+router.post(
+  "/checkEnrollment" , 
+  jauth.authenticateToken,
+  userController.checkEnrollment
+);
+
 module.exports = router;

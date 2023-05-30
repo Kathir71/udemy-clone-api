@@ -139,6 +139,28 @@ const getUserStatus = async (req, res, next) => {
     res.status(500).send({ msg: "Internal server error" });
   }
 };
+const checkEnrollment = async(req , res , next ) => {
+  try{
+    const userId = req.user.objectId;
+    const user = await userModel.findById(userId);
+    if (!user){
+      res.status(403).send({msg:"Not a valid user"});
+      return;
+    }
+    const courseId = req.body.courseId;
+    let userCourses = user.coursesEnrolled;
+    if(userCourses.indexOf(courseId) == -1){
+      res.status(403).send({msg:"Not enrolled in the course"});
+    }
+    else{
+      res.status(200).send({msg:"Enrolled in the course"});
+    }
+  }
+  catch(err){
+    console.log(err);
+    res.status(500).send({msg:"Internal server error"});
+  }
+};
 module.exports = {
   addUser,
   getUser,
@@ -146,4 +168,5 @@ module.exports = {
   getUserCompletion,
   getUserCourses,
   getUserStatus,
+  checkEnrollment
 };
