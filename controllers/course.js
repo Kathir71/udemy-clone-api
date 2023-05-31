@@ -82,6 +82,7 @@ const addLesson = async (req, res, next) => {
   try {
     const instructorId = req.user.objectId;
     const courseId = req.body.courseId;
+    const module = req.body.module;
     const course = await courseModel
       .findOne()
       .where("_id")
@@ -92,16 +93,7 @@ const addLesson = async (req, res, next) => {
       res.status(400).json({ msg: "Invalid course" });
       return;
     }
-    let lesson = req.body.lesson;
-    lesson = JSON.parse(lesson);
-    const pdfFile = req.files.pdfFile[0];
-    const videoFile = req.files.videoFile[0];
-    const pdfSaveResponse = await fileHandlers.pdfUpload(pdfFile);
-    const pdfUrl = pdfSaveResponse.secure_url;
-    const videoSaveResponse = await fileHandlers.videoUpload(videoFile);
-    const videoUrl = videoSaveResponse.secure_url;
-    const moduleObj = { ...lesson, pdfUrl: pdfUrl, videoUrl: videoUrl };
-    const toSave = moduleModel(moduleObj);
+   const toSave = moduleModel(module);
     const newModule = await toSave.save();
     course.modules = course.modules
       ? [...course.modules, newModule._id]

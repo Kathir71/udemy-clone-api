@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "undefined/subscriptions/c3f11f96-db97-4d70-8c60-51d096dbb631/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/ulearn-api",
+    "appService.deploySubpath": "."
+}

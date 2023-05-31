@@ -1,7 +1,5 @@
 const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
-// console.log(cloudinary.config())
-// console.log(process.env.CLOUDINARY_URL);
 const imageUpload = (imageFile) => {
     fs.writeFileSync('./temp' , imageFile.buffer);
     return cloudinary.uploader.upload('./temp');

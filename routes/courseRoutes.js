@@ -51,16 +51,7 @@ router.post(
 router.post(
   "/addLesson",
   jauth.authenticateToken,
-  upload.fields([
-    { name: "pdfFile", maxCount: 1 },
-    { name: "videoFile", maxCount: 1 },
-    { name: "lesson", maxCount: 1 },
-  ]),
-  // (req, res, next) => {
-  //   req.body.courseId = JSON.parse(req.body.courseId);
-  //   next();
-  // },
-  validate(validators.addModuleValidator),
+ validate(validators.addModuleValidator),
   (req, res, next) => {
     instructorModel
       .findOne()
